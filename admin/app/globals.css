@@ -1,0 +1,82 @@
+@import 'tailwindcss';
+
+@layer base {
+  :root {
+    --background: #0f1419;
+    --foreground: #e4e6eb;
+    --card-bg: #1a1f2e;
+    --card-border: #2a3142;
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --accent: #3b82f6;
+    --accent-light: #60a5fa;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --error: #ef4444;
+    --muted: #6b7280;
+  }
+}
+
+@theme inline {
+  --color-background: rgb(var(--background));
+  --color-foreground: rgb(var(--foreground));
+  --color-primary: rgb(var(--primary));
+  --color-accent: rgb(var(--accent));
+}
+
+* {
+  @apply transition-colors;
+}
+
+body {
+  background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%);
+  @apply min-h-screen;
+}
+
+/* Scrollbar styles */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(107, 114, 128, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(107, 114, 128, 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(107, 114, 128, 0.7);
+}
+
+/* Smooth animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
