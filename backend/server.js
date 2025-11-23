@@ -35,25 +35,12 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// CORS setup (frontend + admin + preview + production)
-const allowedOrigins = [
-  "http://localhost:5173", // frontend (Vite dev)
-  "http://localhost:4173", // frontend (Vite preview / build)
-  "http://localhost:3000", // admin dashboard
-  process.env.FRONTEND_URL, // production frontend domain (e.g. https://portfolio.yourname.com)
-  process.env.ADMIN_URL, // production admin domain (if separate)
-].filter(Boolean); // remove undefined
-
+// CORS setup
+// For a public portfolio/demo we allow all origins to avoid CORS issues.
+// If you prefer stricter control, replace origin: "*" with a whitelist.
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // allow REST tools / server-to-server (no origin)
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: "*",
     credentials: true,
   })
 );
@@ -75,11 +62,19 @@ app.use("/api/testimonials", testimonialRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/analytics", analyticsRoutes);
 
+// Health / info endpoint for GET /api
+app.get("/api", (req, res) => {
+  res.json({
+    success: true,
+    message: "API is up. Use /api/projects, /api/blogs, /api/testimonials, etc.",
+  });
+});
+
 // Error handling
 app.use(errorHandler);
 
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>
-  console.log(`Server running on http://localhost:${PORT}`)
+  console.info(`Server running on port ${PORT}`)
 );
