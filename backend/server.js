@@ -35,12 +35,29 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// CORS setup
-// For a public portfolio/demo we allow all origins to avoid CORS issues.
-// If you prefer stricter control, replace origin: "*" with a whitelist.
+// CORS: allow all in dev/demo, whitelist in production
+const allowedOrigins = [
+  "http://localhost:5173", // frontend (Vite dev)
+  "http://localhost:4173", // frontend (Vite preview / build)
+  "http://localhost:3000", // admin dashboard (dev)
+  process.env.FRONTEND_URL, // production frontend domain (set this in env)
+  process.env.ADMIN_URL, // production admin domain (set this in env)
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: "*",
+    origin: (origin, callback) => {
+      // allow server-to-server requests and tools like Postman (no origin)
+      if (!origin) return callback(null, true);
+
+      // Development / preview: allow all origins to avoid CORS friction
+      if (process.env.NODE_ENV !== "production") return callback(null, true);
+
+      // Production: only allow whitelisted origins
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+
+      callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   })
 );
